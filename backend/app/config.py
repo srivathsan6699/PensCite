@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Annotated
 
-from pydantic import HttpUrl, PostgresDsn, SecretStr, field_validator
+from pydantic import Field, HttpUrl, PostgresDsn, SecretStr, field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 # Resolve .env relative to backend/ so it loads regardless of the working directory.
@@ -16,7 +16,8 @@ class Settings(BaseSettings):
     supabase_anon_key: SecretStr
     supabase_service_role_key: SecretStr
 
-    database_url: PostgresDsn
+    # The URL embeds the DB password; keep it out of repr(settings) and logs.
+    database_url: PostgresDsn = Field(repr=False)
 
     openai_api_key: SecretStr
     openai_embedding_model: str = "text-embedding-3-small"
